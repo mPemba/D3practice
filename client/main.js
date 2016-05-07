@@ -2,6 +2,15 @@ import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 
 import './main.html';
+import '../lib/pics.js';
+
+/*
+
+THIS STUFF IS ALL FOR THE HELLO TEMPLATE, UN COMMENT IT OUT IN MAIN.js
+
+*/
+
+
 
 Template.hello.onCreated(function helloOnCreated() {
   // counter starts at 0
@@ -27,7 +36,7 @@ Template.hello.onCreated(function helloOnCreated() {
       .x(function(d) { return x(d.date); })
       .y(function(d) { return y(d.close); });
 
-  var svg = d3.select("body")
+  var svg = d3.select("lineGraph")
       .append("svg")
           .attr("width", width + margin.left + margin.right)
           .attr("height", height + margin.top + margin.bottom)
@@ -91,4 +100,39 @@ Template.hello.events({
     instance.counter.set(instance.counter.get() + 1);
 
   },
+});
+
+
+
+
+/*
+
+THIS STUFF IS ALL FOR THE FEM LESSON.
+
+WE'll be using data from reddit
+
+*/
+
+Template.fem.onCreated(function femOnCreated() {
+
+  var svg = d3.select('svg');
+
+  var data = redditData;
+  console.log(data);
+
+  var g = svg.append('g')
+    .attr('transform', 'translate(0, -10)')
+
+  var circles = g.selectAll('circle')
+    .data(data)
+
+  circles.enter()
+    .append('circle')
+    .attr({
+      cx: function(d, i) { return 49 + i * 5 },
+      cy: function(d, i) { return console.log(d.data.score) },
+      r: 6
+    })
+
+
 });
