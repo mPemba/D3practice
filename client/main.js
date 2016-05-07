@@ -115,24 +115,49 @@ WE'll be using data from reddit
 
 Template.fem.onCreated(function femOnCreated() {
 
-  var svg = d3.select('svg');
+  var margin = {top: 0, right: 0, bottom: 0, left: 0},
+      width = 800 - margin.left - margin.right,
+      height = 600 - margin.top - margin.bottom;
 
-  var data = redditData;
-  console.log(data);
+  var svg = d3.select('body')
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
+
+  var data = redditData.data.children
+    .sort(function( a,b ) {
+      return a.data.score - b.data.score;
+    })
+
+  var maxScore = d3.max(data, function(d) { return d.data.score });
+
+  var yScale = d3.scale.linear()
+    .domain([0, maxScore])
+    .range([600, 0])
 
   var g = svg.append('g')
-    .attr('transform', 'translate(0, -10)')
+    //  .attr('transform', 'translate(0, -10)')
 
   var circles = g.selectAll('circle')
     .data(data)
 
+
   circles.enter()
     .append('circle')
     .attr({
-      cx: function(d, i) { return 49 + i * 5 },
-      cy: function(d, i) { return console.log(d.data.score) },
-      r: 6
+      cx: function(d, i) { return 49 + i * 15 },
+      cy: function(d, i) { return yScale(d.data.score) },
+      r: 6,
+      fill:'#333'
     })
+    .on('mouseover', function(d) {
+      console.log(d);
+    })
+
+
 
 
 });
