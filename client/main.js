@@ -36,15 +36,15 @@ Template.hello.onCreated(function helloOnCreated() {
                 "translate(" + margin.left + "," + margin.top + ")");
 
   var dataDates = [
-    {date:"1-May-12",close:"48.13"},
-    {date:"30-Apr-12",close:"53.98"},
-    {date:"27-Apr-12",close:"67.00"},
-    {date:"26-Apr-12",close:"89.70"},
-    {date:"25-Apr-12",close:"99.00"}
+    // {date:"1-May-12",close:"48.13"},
+    // {date:"30-Apr-12",close:"53.98"},
+    // {date:"27-Apr-12",close:"67.00"},
+    // {date:"26-Apr-12",close:"89.70"},
+    // {date:"25-Apr-12",close:"99.00"}
 
     // example times
-    // {date:"23-May-12",close:"666"},
-    // {date:"26-May-14",close:"69"}
+    {date:"23-May-12",close:"666"},
+    {date:"26-May-14",close:"69"}
   ];
 
   var blastMeData = function(data) {
@@ -58,6 +58,7 @@ Template.hello.onCreated(function helloOnCreated() {
     // Scale the range of the data
     x.domain(d3.extent(data, function(d) { return d.date; }));
     y.domain([0, d3.max(data, function(d) { return d.close; })]);
+    // y.domain(d3.extent(data, function(d) { return d.close;}));
 
     svg.append("path")		// Add the valueline path.
         .attr("class", "line")
