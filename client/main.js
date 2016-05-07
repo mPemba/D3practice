@@ -36,15 +36,15 @@ Template.hello.onCreated(function helloOnCreated() {
                 "translate(" + margin.left + "," + margin.top + ")");
 
   var dataDates = [
-    // {date:"1-May-12",close:"48.13"},
-    // {date:"30-Apr-12",close:"53.98"},
-    // {date:"27-Apr-12",close:"67.00"},
-    // {date:"26-Apr-12",close:"89.70"},
-    // {date:"25-Apr-12",close:"99.00"}
+    {date:"1-May-12",close:"48.13"},
+    {date:"30-Apr-12",close:"53.98"},
+    {date:"27-Apr-12",close:"67.00"},
+    {date:"26-Apr-12",close:"89.70"},
+    {date:"25-Apr-12",close:"99.00"}
 
     // example times
-    {date:"23-May-12",close:"666"},
-    {date:"26-May-14",close:"69"}
+    // {date:"23-May-12",close:"666"},
+    // {date:"26-May-14",close:"69"}
   ];
 
   var blastMeData = function(data) {

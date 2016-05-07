@@ -5,13 +5,21 @@
 </head>
 
 <body>
-  <h1>badass chart</h1>
+  <h1>basic line chart</h1>
 
-  {{> hello}}
+  <!-- {{> hello}} -->
+
+  {{>navBar}}
 
 </body>
 
 <template name="hello">
   <button>Click Me</button>
   <p>You've pressed the button {{counter}} times.</p>
+</template>
+
+<template name="navBar">
+
+  <a href="/FEM"> FEM lesson </a>
+
 </template>
