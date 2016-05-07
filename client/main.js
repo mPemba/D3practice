@@ -10,8 +10,6 @@ THIS STUFF IS ALL FOR THE HELLO TEMPLATE, UN COMMENT IT OUT IN MAIN.js
 
 */
 
-
-
 Template.hello.onCreated(function helloOnCreated() {
   // counter starts at 0
   this.counter = new ReactiveVar(0);
@@ -36,7 +34,7 @@ Template.hello.onCreated(function helloOnCreated() {
       .x(function(d) { return x(d.date); })
       .y(function(d) { return y(d.close); });
 
-  var svg = d3.select("lineGraph")
+  var svg = d3.select("body")
       .append("svg")
           .attr("width", width + margin.left + margin.right)
           .attr("height", height + margin.top + margin.bottom)
@@ -113,19 +111,16 @@ WE'll be using data from reddit
 
 */
 
-Template.fem.onCreated(function femOnCreated() {
+Template.circles.onCreated(function circlesOnCreated() {
 
-  var margin = {top: 0, right: 0, bottom: 0, left: 0},
+  var margin = {top: 10, right: 10, bottom: 10, left: 10},
       width = 800 - margin.left - margin.right,
-      height = 600 - margin.top - margin.bottom;
+      height = 450 - margin.top - margin.bottom;
 
   var svg = d3.select('body')
     .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-        .attr("transform",
-              "translate(" + margin.left + "," + margin.top + ")");
 
   var data = redditData.data.children
     .sort(function( a,b ) {
@@ -136,26 +131,49 @@ Template.fem.onCreated(function femOnCreated() {
 
   var yScale = d3.scale.linear()
     .domain([0, maxScore])
-    .range([600, 0])
+    .range([400, 0])
 
   var g = svg.append('g')
-    //  .attr('transform', 'translate(0, -10)')
+    .attr('transform', 'translate(5, 5)')
 
   var circles = g.selectAll('circle')
     .data(data)
 
-
   circles.enter()
     .append('circle')
     .attr({
-      cx: function(d, i) { return 49 + i * 15 },
+      cx: function(d, i) { return 49 + i * 25 },
       cy: function(d, i) { return yScale(d.data.score) },
       r: 6,
       fill:'#333'
     })
     .on('mouseover', function(d) {
-      console.log(d);
+      console.log(d.data.score);
     })
+
+
+
+
+});
+
+
+
+
+
+
+
+
+
+Template.rectangles.onCreated(function rectOnCreated() {
+
+  var margin = {top: 10, right: 10, bottom: 10, left: 10},
+      width = 800 - margin.left - margin.right,
+      height = 450 - margin.top - margin.bottom;
+
+  var svg = d3.select('#mikesRectangles')
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
 
 
 

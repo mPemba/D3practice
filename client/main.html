@@ -5,23 +5,28 @@
 </head>
 
 <body>
-  <!-- <h1>basic lineGraph</h1>
 
-  <div id="lineGraph"></div>
+  <!-- hello is the first lineGraph with test data from the e-book -->
+  <!-- {{> hello}} -->
 
-  {{> hello}} -->
+  <!-- circles is the circle graph with reddit data -->
+  <!-- {{> circles}} -->
 
-  {{> fem}}
-
+  <!-- rectangles  -->
+  {{> rectangles}}
+  <div id="mikesRectangles"></div>
 
 
 </body>
 
 <template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+  <h1>basic lineGraph</h1>
 </template>
 
-<template name="fem">
-  <h1>reddit data</h1>
+<template name="circles">
+  <h1>reddit data circles</h1>
+</template>
+
+<template name="rectangles">
+  <h1>categorical rect scales</h1>
 </template>
