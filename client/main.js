@@ -161,20 +161,20 @@ Template.rectangles.onCreated(function rectanglesOnCreated() {
 
   var data = redditData.data.children
     .sort(function(a, b) {
-      return b.data.score - a.data.score
+      return a.data.score - b.data.score
     })
 
   var maxScore = d3.max(data, function(d) { return d.data.score });
 
-  var ch = 400; // chart height
+  var chartHeight = 400;
 
   var yScale = d3.scale.linear()
     .domain([0, maxScore])
-    .range([ch, 0])
+    .range([0, chartHeight])
 
   var xScale = d3.scale.ordinal()
     .domain(d3.range(data.length))
-    .rangeBands([0, 666], 0.5)
+    .rangeBands([0, 500], 0.5)
 
   var g = svg.append('g')
     .attr('transform', 'translate(80, 11)')
@@ -186,11 +186,18 @@ Template.rectangles.onCreated(function rectanglesOnCreated() {
       .append('rect')
       .attr({
           x: function(d, i) { return xScale(i) },
-          y: function(d, i) { return ch - yScale(d.data.score) },
+          y: function(d, i) { return chartHeight - yScale(d.data.score) },
           width: xScale.rangeBand(),
           height: function(d, i) { return yScale(d.data.score) },
           fill: '#112342'
       })
-
+      .on('mouseover', function(d) {
+        sendResultsToView(d.data.score, this)
+      })
 
 });
+
+var sendResultsToView = function(score, container) {
+  $('.circleResultsContainer').empty();
+  $('.circleResultsContainer').prepend('<span class="barChartDataText">' + ' - ' + score + ' - ' + '</span>')
+}
