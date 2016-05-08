@@ -10,7 +10,7 @@ THIS STUFF IS ALL FOR THE HELLO TEMPLATE, UN COMMENT IT OUT IN MAIN.js
 
 */
 
-Template.hello.onCreated(function helloOnCreated() {
+Template.simpleLine.onCreated(function simpleLineOnCreated() {
   // counter starts at 0
   this.counter = new ReactiveVar(0);
 
@@ -86,22 +86,6 @@ Template.hello.onCreated(function helloOnCreated() {
 
 });
 
-Template.hello.helpers({
-  counter() {
-    return Template.instance().counter.get();
-  },
-});
-
-Template.hello.events({
-  'click button'(event, instance) {
-    // increment the counter when button is clicked
-    instance.counter.set(instance.counter.get() + 1);
-
-  },
-});
-
-
-
 
 /*
 
@@ -164,18 +148,49 @@ Template.circles.onCreated(function circlesOnCreated() {
 
 
 
-Template.rectangles.onCreated(function rectOnCreated() {
+Template.rectangles.onCreated(function rectanglesOnCreated() {
 
   var margin = {top: 10, right: 10, bottom: 10, left: 10},
       width = 800 - margin.left - margin.right,
       height = 450 - margin.top - margin.bottom;
 
-  var svg = d3.select('#mikesRectangles')
+  var svg = d3.select('body')
     .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
 
+  var data = redditData.data.children
+    .sort(function(a, b) {
+      return b.data.score - a.data.score
+    })
 
+  var maxScore = d3.max(data, function(d) { return d.data.score });
+
+  var ch = 400; // chart height
+
+  var yScale = d3.scale.linear()
+    .domain([0, maxScore])
+    .range([ch, 0])
+
+  var xScale = d3.scale.ordinal()
+    .domain(d3.range(data.length))
+    .rangeBands([0, 666], 0.5)
+
+  var g = svg.append('g')
+    .attr('transform', 'translate(80, 11)')
+
+  var bars = g.selectAll('rect')
+    .data(data)
+
+  bars.enter()
+      .append('rect')
+      .attr({
+          x: function(d, i) { return xScale(i) },
+          y: function(d, i) { return ch - yScale(d.data.score) },
+          width: xScale.rangeBand(),
+          height: function(d, i) { return yScale(d.data.score) },
+          fill: '#112342'
+      })
 
 
 });

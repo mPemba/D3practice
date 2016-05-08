@@ -27,6 +27,16 @@ path {
     shape-rendering: crispEdges;
 }
 
+#helloLineChart {
+  width: 100%;
+  height: 500px;
+}
+
+#circleChart {
+  width: 100%;
+  height: 500px;
+}
+
 #mikesRectangles {
   width: 100%;
   height: 500px;
