@@ -97,8 +97,8 @@ WE'll be using data from reddit
 
 Template.circles.onCreated(function circlesOnCreated() {
 
-  var margin = {top: 10, right: 10, bottom: 10, left: 10},
-      width = 800 - margin.left - margin.right,
+  var margin = {top: 30, right: 30, bottom: 30, left: 30},
+      width = 860 - margin.left - margin.right,
       height = 450 - margin.top - margin.bottom;
 
   var svg = d3.select('body')
@@ -117,8 +117,23 @@ Template.circles.onCreated(function circlesOnCreated() {
     .domain([0, maxScore])
     .range([400, 0])
 
+  var xScale = d3.scale.ordinal()
+    .domain(d3.range(data.length))
+    .rangeBands([0, width])
+
+  var line = d3.svg.line()
+  .x(function(d,i) { return xScale(i) })
+  .y(function(d,i) { return yScale(d.data.score) })
+
   var g = svg.append('g')
-    .attr('transform', 'translate(5, 5)')
+    .attr('transform', 'translate(50, 50)')
+
+  g.append("path")
+  .attr("d", line(data))
+  .style({
+    fill: "none",
+    stroke: "#333"
+  })
 
   var circles = g.selectAll('circle')
     .data(data)
@@ -126,17 +141,38 @@ Template.circles.onCreated(function circlesOnCreated() {
   circles.enter()
     .append('circle')
     .attr({
-      cx: function(d, i) { return 49 + i * 25 },
+      cx: function(d, i) { return xScale(i) },
+      // cx: function(d, i) { return 49 + i * 25 },
       cy: function(d, i) { return yScale(d.data.score) },
       r: 6,
-      fill:'#333'
+      fill:'#fff',
     })
+    .style('stroke', '#333')
     .on('mouseover', function(d) {
       sendCircleResultsToView(d.data.score, this);
-      d3.select(this).style("fill", "blue");
+      d3.select(this).style("r", '10');
+
+      if ( d.data.score <= 499 ) {
+        d3.select(this).style('fill', '#73C1C6');
+      }
+      if ( d.data.score >= 500 && d.data.score <= 999 ) {
+        d3.select(this).style('fill', '#449DD1');
+      }
+      if ( d.data.score >= 1000 && d.data.score <= 2499 ) {
+        d3.select(this).style('fill', '#67597A');
+      }
+      if ( d.data.score >= 2500 && d.data.score <= 4999 ) {
+        d3.select(this).style('fill', '#544E61');
+      }
+      if ( d.data.score >= 5000 ) {
+        d3.select(this).style('fill', '#8C0017');
+      }
+
     })
     .on('mouseout', function(d) {
-      d3.select(this).style("fill", "#333")
+      d3.select(this).style("fill", "#fff");
+      d3.select(this).style("stroke", "#333");
+      d3.select(this).style("r", "6");
     })
 
 });
@@ -157,7 +193,7 @@ var sendCircleResultsToView = function(score, item) {
 Template.rectangles.onCreated(function rectanglesOnCreated() {
 
   var margin = {top: 10, right: 10, bottom: 10, left: 10},
-      width = 800 - margin.left - margin.right,
+      width = 860 - margin.left - margin.right,
       height = 450 - margin.top - margin.bottom;
 
   var svg = d3.select('body')
@@ -167,7 +203,8 @@ Template.rectangles.onCreated(function rectanglesOnCreated() {
 
   var data = redditData.data.children
     .sort(function(a, b) {
-      return a.data.score - b.data.score
+      return d3.ascending(a.data.score, b.data.score)
+      // return a.data.score - b.data.score
     })
 
   var maxScore = d3.max(data, function(d) { return d.data.score });
@@ -182,11 +219,42 @@ Template.rectangles.onCreated(function rectanglesOnCreated() {
     .domain(d3.range(data.length))
     .rangeBands([0, 666], 0.2)
 
+  var yScaleLine = d3.scale.linear()
+    .domain([0, maxScore])
+    .range([chartHeight, 0])
+
+  var axis = d3.svg.axis()
+    .scale( d3.scale.linear()
+              .domain([maxScore, 0])
+              .range([0, chartHeight])
+            )
+    .orient('left')
+
   var g = svg.append('g')
-    .attr('transform', 'translate(80, 11)')
+    .attr('transform', 'translate(150, 11)')
+
+    axis(g)
+    g.selectAll('path')
+      .style({ fill: 'none', stroke: '#333' })
+    g.selectAll('line')
+      .style({ stroke: '#333' })
 
   var bars = g.selectAll('rect')
     .data(data)
+
+  var line = d3.svg.line()
+    .x(function(d, i) { return xScale(i) })
+    .y(function(d, i) { return yScaleLine(d.data.score) })
+    // .interpolate('basis')
+    .interpolate('cardinal')
+
+  // append the line to the bar chart
+  g.append('path')
+    .attr('d', line(data))
+    .style({
+      fill: 'none',
+      stroke: '#333'
+    })
 
   bars.enter()
       .append('rect')
@@ -195,14 +263,31 @@ Template.rectangles.onCreated(function rectanglesOnCreated() {
           y: function(d, i) { return chartHeight - yScale(d.data.score) },
           width: xScale.rangeBand(),
           height: function(d, i) { return yScale(d.data.score) },
-          fill: '#112342'
+          fill: '#fff',
+          stroke: '#333'
       })
       .on('mouseover', function(d) {
         sendBarResultsToView(d.data.score);
-        d3.select(this).style("fill", "#d0d2d3");
+
+        if ( d.data.score <= 499 ) {
+          d3.select(this).style('fill', '#73C1C6');
+        }
+        if ( d.data.score >= 500 && d.data.score <= 999 ) {
+          d3.select(this).style('fill', '#449DD1');
+        }
+        if ( d.data.score >= 1000 && d.data.score <= 2499 ) {
+          d3.select(this).style('fill', '#67597A');
+        }
+        if ( d.data.score >= 2500 && d.data.score <= 4999 ) {
+          d3.select(this).style('fill', '#544E61');
+        }
+        if ( d.data.score >= 5000 ) {
+          d3.select(this).style('fill', '#8C0017');
+        }
+
       })
       .on('mouseout', function(d) {
-        d3.select(this).style('fill', '#112342');
+        d3.select(this).style('fill', '#fff');
       })
 
 });
