@@ -7,7 +7,7 @@
 body {
   width: 100%;
   height: 100%;
-  font-family: Optima, Segoe, 'Segoe UI', Candara, Calibri, Arial, sans-serif;
+  font-family: 'Franklin Gothic Medium', 'Franklin Gothic', 'ITC Franklin Gothic', Arial, sans-serif;
 }
 
 path {
@@ -24,7 +24,11 @@ path {
     shape-rendering: crispEdges;
 }
 
-.circleResultsContainer {
+.templateContainer {
+  margin-left: 100px;
+}
+
+.barResultsContainer {
   width: 100%;
   height: auto;
 }
@@ -36,4 +40,8 @@ path {
   margin: 2px;
   line-height: 3;
   border-bottom: 1px solid #d0d2d3;
+}
+
+circle:hover {
+  background-color: #d0d2d3;
 }

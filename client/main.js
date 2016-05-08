@@ -132,15 +132,21 @@ Template.circles.onCreated(function circlesOnCreated() {
       fill:'#333'
     })
     .on('mouseover', function(d) {
-      console.log(d.data.score);
+      sendCircleResultsToView(d.data.score, this);
+      d3.select(this).style("fill", "blue");
     })
-
-
-
+    .on('mouseout', function(d) {
+      d3.select(this).style("fill", "#333")
+    })
 
 });
 
+var sendCircleResultsToView = function(score, item) {
+  $('.circleResultsContainer').empty();
+  $('.circleResultsContainer').prepend('<span class="barChartDataText">' + ' - ' + score + ' - ' + '</span>')
 
+
+}
 
 
 
@@ -174,7 +180,7 @@ Template.rectangles.onCreated(function rectanglesOnCreated() {
 
   var xScale = d3.scale.ordinal()
     .domain(d3.range(data.length))
-    .rangeBands([0, 500], 0.5)
+    .rangeBands([0, 666], 0.2)
 
   var g = svg.append('g')
     .attr('transform', 'translate(80, 11)')
@@ -192,12 +198,16 @@ Template.rectangles.onCreated(function rectanglesOnCreated() {
           fill: '#112342'
       })
       .on('mouseover', function(d) {
-        sendResultsToView(d.data.score, this)
+        sendBarResultsToView(d.data.score);
+        d3.select(this).style("fill", "#d0d2d3");
+      })
+      .on('mouseout', function(d) {
+        d3.select(this).style('fill', '#112342');
       })
 
 });
 
-var sendResultsToView = function(score, container) {
-  $('.circleResultsContainer').empty();
-  $('.circleResultsContainer').prepend('<span class="barChartDataText">' + ' - ' + score + ' - ' + '</span>')
+var sendBarResultsToView = function(score) {
+  $('.barResultsContainer').empty();
+  $('.barResultsContainer').prepend('<span class="barChartDataText">' + ' - ' + score + ' - ' + '</span>')
 }
