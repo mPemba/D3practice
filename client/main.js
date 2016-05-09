@@ -8,6 +8,27 @@ import '../lib/pics.js';
 
 THIS STUFF IS ALL FOR THE HELLO TEMPLATE, UN COMMENT IT OUT IN MAIN.js
 
+// Template.hello.helpers({
+//   counter() {
+//     return Template.instance().counter.get();
+//   },
+// });
+//
+// Template.hello.events({
+//   'click button'(event, instance) {
+//     // increment the counter when button is clicked
+//     instance.counter.set(instance.counter.get() + 1);
+//   },
+// });
+
+
+
+Welcome to HELL....
+
+
+
+
+
 */
 
 Template.simpleLine.onCreated(function simpleLineOnCreated() {
@@ -192,25 +213,29 @@ var sendCircleResultsToView = function(score, item) {
 
 Template.rectangles.onCreated(function rectanglesOnCreated() {
 
+  // set the dimensions of the graph
   var margin = {top: 10, right: 10, bottom: 10, left: 10},
       width = 860 - margin.left - margin.right,
       height = 450 - margin.top - margin.bottom;
 
+  // append the svg canvas
   var svg = d3.select('body')
     .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
 
+  // get the data
   var data = redditData.data.children
     .sort(function(a, b) {
       return d3.ascending(a.data.score, b.data.score)
       // return a.data.score - b.data.score
     })
 
+  // declare some helper variables
   var maxScore = d3.max(data, function(d) { return d.data.score });
-
   var chartHeight = 400;
 
+  // set the ranges and order
   var yScale = d3.scale.linear()
     .domain([0, maxScore])
     .range([0, chartHeight])
@@ -223,6 +248,7 @@ Template.rectangles.onCreated(function rectanglesOnCreated() {
     .domain([0, maxScore])
     .range([chartHeight, 0])
 
+  // define the axis
   var axis = d3.svg.axis()
     .scale( d3.scale.linear()
               .domain([maxScore, 0])
@@ -230,25 +256,29 @@ Template.rectangles.onCreated(function rectanglesOnCreated() {
             )
     .orient('left')
 
+  // append the graph
   var g = svg.append('g')
     .attr('transform', 'translate(150, 11)')
 
-    axis(g)
-    g.selectAll('path')
-      .style({ fill: 'none', stroke: '#333' })
-    g.selectAll('line')
-      .style({ stroke: '#333' })
+  // set styles for the axes
+  axis(g)
+  g.selectAll('path')
+    .style({ fill: 'none', stroke: '#333' })
+  g.selectAll('line')
+    .style({ stroke: '#333' })
 
+  // bind the data
   var bars = g.selectAll('rect')
     .data(data)
 
+  // scale the range of the line
   var line = d3.svg.line()
     .x(function(d, i) { return xScale(i) })
     .y(function(d, i) { return yScaleLine(d.data.score) })
     // .interpolate('basis')
     .interpolate('cardinal')
 
-  // append the line to the bar chart
+  // draw the line
   g.append('path')
     .attr('d', line(data))
     .style({
@@ -256,6 +286,7 @@ Template.rectangles.onCreated(function rectanglesOnCreated() {
       stroke: '#333'
     })
 
+  // enter will build the bars
   bars.enter()
       .append('rect')
       .attr({
@@ -269,6 +300,7 @@ Template.rectangles.onCreated(function rectanglesOnCreated() {
       .on('mouseover', function(d) {
         sendBarResultsToView(d.data.score);
 
+        // depending on the score, the color will change
         if ( d.data.score <= 499 ) {
           d3.select(this).style('fill', '#73C1C6');
         }
@@ -296,3 +328,104 @@ var sendBarResultsToView = function(score) {
   $('.barResultsContainer').empty();
   $('.barResultsContainer').prepend('<span class="barChartDataText">' + ' - ' + score + ' - ' + '</span>')
 }
+
+
+
+
+Template.brushExample.onCreated(function buildBrushExample() {
+
+  // set the dimensions of the graph
+  var margin = {top: 10, right: 10, bottom: 10, left: 10},
+      width = 860 - margin.left - margin.right,
+      height = 450 - margin.top - margin.bottom;
+
+  // append the svg canvas
+  var svg = d3.select('body')
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+
+  // get the data
+  var data = redditData.data.children;
+
+  // format timestamps from seconds to milliseconds
+  data.forEach(function(d) {
+    d.data.created *= 1000
+  })
+
+  // return the range of posts w/ extent method
+  var extent = d3.extent(data, function(d) {
+    return d.data.created
+  })
+
+  // set the range
+  var scale = d3.time.scale()
+  .domain( extent )
+  .range([10, 463])
+
+  var brush = d3.svg.brush()
+  brush.x(scale)
+  // brush.extent([22, 28])
+
+  // append the graph
+  var g = svg.append("g")
+  var chartHeight = 30;
+
+  // render and style the brush
+  brush(g)
+  g.attr("transform", "translate(100  , 100)")
+  g.selectAll("rect").attr("height", chartHeight)
+  g.selectAll(".background")
+    .style({fill: "#d0d2d3", visibility: "visible"})
+  g.selectAll(".extent")
+    .style({fill: "#474345", visibility: "visible"})
+  g.selectAll(".resize rect")
+    .style({fill: "#276C86", visibility: "visible"})
+
+  // render rectangles on top of the brush
+  var rects = g.selectAll('rect.events')
+  .data(data)
+  rects.enter()
+  .append('rect').classed('events', true) // true adds class, false removes class
+  rects.attr({
+    x: function(d) { return scale(d.data.created) },
+    y: 0,
+    width: 1,
+    height: chartHeight
+  })
+  .style('pointer-events', 'none');
+
+  // filter the data to what is inside the extent and light up the ones that match
+  brush.on('brushend', function() {
+
+    // get extent
+    var ext = brush.extent()
+
+    // filter will return true or false for every element in the array
+    // if it returns true it gets put in this new array, and skipped if false
+    var filtered = data.filter(function(d) {
+
+      // the extent is an array with a min and max timestamp so get us everything inbetween
+      return ( d.data.created > ext[0] && d.data.created < ext[1] )
+    });
+
+    // log to console
+    console.log(brush.extent());
+
+    // remove all styling
+    g.selectAll('rect.events')
+    .style({ stroke: '' });
+
+    // highlight rectangles
+    g.selectAll('rect.events')
+
+    // return the id / key to make sure we highlight correct data
+    .data(filtered, function(d) { return d.data.id })
+    .style({
+      stroke: '#fff'
+    })
+
+  });
+
+
+});
